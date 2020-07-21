@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>factur.io</title>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css'><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<html lang="en" ng-app="demo">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>factur.io</title>
+</head>
+
+<body ng-controller="demoController as vm">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Adjunte Facturas para Factoring</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <button class="btn btn-primary" ng-click="vm.addDoc()">Agregar Nueva Factura</button>
+    <div class="panel-group" data-as-sortable="vm.documentDragListeners" ng-model="vm.documents">
+      <div class="panel panel-default xlist" ng-repeat="doc in vm.documents" data-as-sortable-item>
+        <div class="panel-heading">
+          <h4 class="panel-title">
+                 <i class="fa fa-grip-large fa-rotate-90" data-as-sortable-item-handle></i>
+                <a data-toggle="collapse" data-target="#collapse{{$index}}">{{doc.type}}<i class="chevron fa fa-fw" ></i></a> <span class="badge">{{doc.files.length}}</span>
+                <a class="close-ribbon pull-right" ng-click="vm.removeDoc($index)"><i class="fa fa-times"></i></a>
+            </h4>
+
+        </div>
+        <div id="collapse{{$index}}" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <button class="btn btn-primary" ngf-select="vm.addFiles($files,doc.files)" accept="*/*" multiple ng-model="vm.files" ngf-max-height="1000" ngf-max-size="5MB">
+                    Seleccionar Archivo</button>
+
+            <br>
+            <br>
+            <div ngf-drop="vm.addFiles($files,doc.files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'image/*,application/pdf'">
+              <div class="dragOverlay">
+                <div class="dragInner">Arrastre el Archivo Aqui</div>
+              </div>
+              <div ngf-no-file-drop>Arrastrar el archivo no es soportado por este explorador</div>
+              <ul class="list-group" data-as-sortable="vm.fileDragListeners" ng-model="doc.files">
+                <li class="list-group-item list-group-item-info">
+                  <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-3 col-xs-3">Ordenar</div>
+                    <div class="col-lg-4 col-md-4 col-sm-7 col-xs-7">Nombre</div>
+                    <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Tamaño (MB)</div>
+                    <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Tipo</div>
+                    <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">Ultima Modificación</div>
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2"></div>
+                  </div>
+                </li>
+                <li class="list-group-item" ng-show="doc.files.length === 0">
+                  Arrastrar Imagenes o PDFs aquí
+                </li>
+                <li ng-repeat="f in doc.files" class="list-group-item xlist" data-as-sortable-item>
+                  <div class="row">
+                    <div class="col-lg-1 col-md-1 col-sm-3 col-xs-3">
+                      <div class="row">
+                        <div class="col-xs-4" data-as-sortable-item-handle style="padding-top:5px;">
+                          <i class="fa fa-grip"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-11 col-md-11 col-sm-7 col-xs-7">
+                      <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-11 col-xs-10 wraptext">{{f.name}}
+                        </div>
+                        <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">{{(f.size/1024/1024).toPrecision(2)}}</div>
+                        <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">{{f.type}}</div>
+                        <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">{{f.lastModified | date: short}}</div>
+                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                          <button type="button" class="btn btn-xs btn-danger" ng-click="vm.removeFile(doc.files,$index)">
+                                                <span><i class="fa fa-trash"></i></span>
+                                            </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-login100-form-btn p-t-10">
+      <button class="login100-form-btn">
+        <a href="./page_bot.html">Subir</a>
+      </button>
+    </div>
+</body>
+
+</html>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.0.4/ng-file-upload-all.min.js'></script>
+<script src='https://cdn.rawgit.com/a5hik/ng-sortable/master/dist/ng-sortable.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-animate.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

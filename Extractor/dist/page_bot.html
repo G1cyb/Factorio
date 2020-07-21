@@ -1,0 +1,345 @@
+<head>
+    <style>
+
+    </style>
+    <script src="/scripts/snippet-javascript-console.min.js?v=1"></script>
+    <style type="text/css">
+        .as-console-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 150px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            border-top: 1px solid #000;
+            display: none;
+        }
+
+        .as-console {
+            background: #e9e9e9;
+            border: 1px solid #ccc;
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .as-console-row {
+            display: table-row;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .as-console-row:after {
+            display: table-cell;
+            padding: 3px 6px;
+            color: rgba(0, 0, 0, .35);
+            border: 1px solid #ccc;
+            content: attr(data-date);
+            vertical-align: top;
+        }
+
+        .as-console-row+.as-console-row>* {
+            border: 1px solid #ccc;
+        }
+
+        .as-console-row-code {
+            width: 100%;
+            white-space: pre-wrap;
+            padding: 3px 5px;
+            display: table-cell;
+            font-family: monospace;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .as-console-error:before {
+            content: 'Error: ';
+            color: #f00;
+        }
+
+        .as-console-assert:before {
+            content: 'Assertion failed: ';
+            color: #f00;
+        }
+
+        .as-console-info:before {
+            content: 'Info: ';
+            color: #00f;
+        }
+
+        .as-console-warning:before {
+            content: 'Warning: ';
+            color: #e90
+        }
+
+        @-webkit-keyframes flash {
+            0% {
+                background: rgba(255, 240, 0, .25);
+            }
+
+            100% {
+                background: none;
+            }
+        }
+
+        @-moz-keyframes flash {
+            0% {
+                background: rgba(255, 240, 0, .25);
+            }
+
+            100% {
+                background: none;
+            }
+        }
+
+        @-ms-keyframes flash {
+            0% {
+                background: rgba(255, 240, 0, .25);
+            }
+
+            100% {
+                background: none;
+            }
+        }
+
+        @keyframes flash {
+            0% {
+                background: rgba(255, 240, 0, .25);
+            }
+
+            100% {
+                background: none;
+            }
+        }
+
+        .as-console-row-code,
+        .as-console-row:after {
+            -webkit-animation: flash 1s;
+            -moz-animation: flash 1s;
+            -ms-animation: flash 1s;
+            animation: flash 1s;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.87/pdf.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+    <input type="file" id="file" name="file" accept="application/pdf">
+    <br>
+    <p id="content"></p>
+
+    <script type="text/javascript">
+        $("#file").on("change", function (evt) {
+            var file = evt.target.files[0];
+
+            //Read the file using file reader
+            var fileReader = new FileReader();
+
+            fileReader.onload = function () {
+
+                //Turn array buffer into typed array
+                var typedarray = new Uint8Array(this.result);
+
+                //calling function to read from pdf file
+                getText(typedarray).then(function (text) {
+                    
+                    /*variables emisor*/
+                    var rutEmisor, tipoDoc, folio, fechaEmision, rutReceptor, razonSocialReceptor, montoFactura
+                    /*Identificacion del Cedente*/
+                    var rutCedente, razonSocialCedente, dirCedente, emailCedente, rutAuthCedente, nombreAuthCedente
+                    /*Identificaicon de la Cesion*/
+                    var rutCesionario, razonSocialCesionario, dirCesionario, emailCesionario, fechaUltVencCesionario, montoCesion, decJurada, otrosCond, nombreContacto, fonoContacto, emailContacto, emailDeudor
+
+                    var text_split = text.split(" ")
+                    tipoDoc = "Factura Electronica"
+                    filtered_split = text_split.filter(function(value,index,arr){
+                        return value != "";
+                    });
+
+                    rutEmisor = filtered_split[1].substr(0,12);
+                    nombreEmisor = filtered_split[36].substr(19);
+                    folio = filtered_split[3].substr(0,9);
+                    rutReceptor = filtered_split[193].substr(0,12);
+                    razonSocialEmisor = filtered_split[11].substr(8) + " " + filtered_split[12] + " " + filtered_split[13] + " " + filtered_split[14] + " " + filtered_split[15] + " " + filtered_split[16] + " " + filtered_split[17] + " " + filtered_split[18] + " " + filtered_split[19] + " " + filtered_split[20] + " " + filtered_split[21] + " " + filtered_split[22] + " " + filtered_split[23] + " " + filtered_split[24] + " " + filtered_split[25] + " " + filtered_split[26] + " " + filtered_split[27] + " " + filtered_split[28] + " " + filtered_split[29] + " " + filtered_split[30] + " " + filtered_split[31] + " " + filtered_split[32] + " " + filtered_split[33] + " " + filtered_split[34] + " " + filtered_split[35] + " " + filtered_split[36].substr(0,14);
+                    montoFactura = filtered_split[267].substr(17);
+                    rutCedente = filtered_split[193].substr(0,12)
+                    razonSocialCedente = filtered_split[194] + " " + filtered_split[195] + " " + filtered_split[196]+ " " + filtered_split[197].substr(0,11)
+                    dirEmisor= filtered_split[37].substr(6,9) + " " + filtered_split[38] + " " + filtered_split[39] + " " + filtered_split[40] + " " + filtered_split[41] + " " + filtered_split[42] + " " + filtered_split[43] + " " + filtered_split[44]
+                    dirCedente = filtered_split[187]+ " "+filtered_split[188]+ " "+filtered_split[189]+ " "+filtered_split[190].substr(0,3) + " "+ filtered_split[191].substr(0,8)
+                    emailCedente = 'N/A'
+                    rutAuthCedente = filtered_split[193].substr(0,12)
+                    nombreAuthCedente = filtered_split[182] + " "+ filtered_split[183] + " "+ filtered_split[184] + " "+ filtered_split[185] + " "+ filtered_split[186].substr(0,3)
+                    fechaUltVencCesionario = filtered_split[206] + filtered_split[207] + filtered_split[208] + filtered_split[209] + filtered_split[210].substr(0,4)
+
+                    /*Selected pdf file content is in the variable text. */
+                    document.getElementById('rut_emisor').value=rutEmisor
+                    document.getElementById('nombre_emisor').value=nombreEmisor   
+                    document.getElementById('folio').value=folio
+                    document.getElementById('rut_receptor').value=rutReceptor
+                    document.getElementById('razon_social_emisor').value=razonSocialEmisor
+                    document.getElementById('monto_factura').value=montoFactura
+                
+                    document.getElementById('rut_cedente').value=rutEmisor
+                    document.getElementById('razon_social_cedente').value=razonSocialEmisor
+                    document.getElementById('direccion_cedente').value=dirEmisor
+                    document.getElementById('email_cedente').value=emailCedente
+                    document.getElementById('rut_auth_cedente').value='79.734.931-1'
+                    document.getElementById('nombre_auth_cedente').value='Markus Krisam'
+
+                    document.getElementById('rut_cesionario').value='79.734.931-1'
+                    document.getElementById('razon_social_cesionario').value='Factoring'
+                    document.getElementById('direccion_cesionario').value='Diagonal Las Torres 8342'
+                    document.getElementById('email_cesionario').value='factorio@empresa.com'
+                    document.getElementById('monto_cesion').value=montoFactura
+                    document.getElementById('fecha_ultimo_vencimiento').value=fechaUltVencCesionario
+                    document.getElementById('nombre_contacto').value='Markus Krisam'
+                    document.getElementById('fono_contacto').value='+56982745367'
+                    document.getElementById('email_contacto').value='mkrisam@factorio.com'
+                    document.getElementById('email_deudor').value='N/A'
+  
+
+                }, function (reason) //Execute only when there is some error while reading pdf file
+                {
+                    alert('Seems this file is broken, please upload another file');
+                    console.error(reason);
+                });
+
+                //getText() function definition. This is the pdf reader function.
+                function getText(typedarray) {
+
+                    //PDFJS should be able to read this typedarray content
+
+                    var pdf = PDFJS.getDocument(typedarray);
+                    return pdf.then(function (pdf) {
+
+                        // get all pages text
+                        var maxPages = pdf.pdfInfo.numPages;
+                        var countPromises = [];
+                        // collecting all page promises
+                        for (var j = 1; j <= maxPages; j++) {
+                            var page = pdf.getPage(j);
+
+                            var txt = "";
+                            countPromises.push(page.then(function (page) {
+                                // add page promise
+                                var textContent = page.getTextContent();
+
+                                return textContent.then(function (text) {
+                                    // return content promise
+                                    return text.items.map(function (s) {
+                                        return s.str;
+                                    }).join(''); // value page text
+                                });
+                            }));
+                        }
+
+                        // Wait for all pages and join text
+                        return Promise.all(countPromises).then(function (texts) {
+                            return texts.join('');
+                        });
+                    });
+                }
+            };
+            //Read the file as ArrayBuffer
+            fileReader.readAsArrayBuffer(file);
+
+        });
+    </script>
+
+    <div class="as-console-wrapper">
+        <div class="as-console"></div>
+    </div>
+
+    <form action="" method="get" name="SiiForm">
+
+        <h4>Identificacion del Documento.</h4>
+
+        <label for="rut_emisor">Rut Emisor :  </label>
+        <input type="text" id="rut_emisor" name="rut_emisor" value=""><br>
+
+        <label>Tipo Documento :  </label>
+        <label>Factura Electrónica</label><br>
+
+        <label for="nombre_emisor">Nombre Emisor :  </label>
+        <input type="text" id="nombre_emisor" name="nombre_emisor" value=""><br>
+        
+        <label for="folio">Folio : </label>
+        <input type="text" id="folio" name="folio" value=""><br>
+        
+        <label for="rut_receptor">Rut Receptor :  </label>
+        <input type="text" id="rut_receptor" name="rut_receptor" value=""><br>
+
+        <label for="razon_social_emisor">Razón Social Emisor :</label>
+        <input type="text" id="razon_social_emisor" name="razon_social_emisor" value=""><br>
+
+        <label for="monto_factura">Monto Factura :</label>
+        <input type="text" id="monto_factura" name="monto_factura" value=""><br>
+
+        <h4>Identificacion del Cedente</h4>
+
+        <label for="rut_cedente">Rut Cedente :  </label>
+        <input type="text" id="rut_cedente" name="rut_cedente" value=""><br>
+
+        <label for="razon_social_cedente">Razón Social Cedente :</label>
+        <input type="text" id="razon_social_cedente" name="razon_social_cedente" value=""><br>
+
+        <label for="direccion_cedente">Dirección Cedente :</label>
+        <input type="text" id="direccion_cedente" name="direccion_cedente" value=""><br>
+
+        <label for="email_cedente">Email Cedente :</label>
+        <input type="text" id="email_cedente" name="email_cedente" value=""><br>
+
+        <label for="rut_auth_cedente">Rut Autorizado por Cedente :  </label>
+        <input type="text" id="rut_auth_cedente" name="rut_auth_cedente" value=""><br>
+
+        <label for="nombre_auth_cedente">Nombre Autorizado por Cedente :  </label>
+        <input type="text" id="nombre_auth_cedente" name="nombre_auth_cedente" value=""><br>
+
+        <h4>Identificacion de la Cesión</h4>
+
+        <label for="rut_cesionario">Rut Cesionario :  </label>
+        <input type="text" id="rut_cesionario" name="rut_cesionario" value=""><br>
+
+        <label for="razon_social_cesionario">Razón Social Cesionario :</label>
+        <input type="text" id="razon_social_cesionario" name="razon_social_cesionario" value=""><br>
+
+        <label for="direccion_cesionario">Dirección Cedente :</label>
+        <input type="text" id="direccion_cesionario" name="direccion_cesionario" value=""><br>
+
+        <label for="email_cesionario">Email Cesionario :</label>
+        <input type="text" id="email_cesionario" name="email_cesionario" value=""><br>
+
+        <label for="monto_cesion">Monto Cesion :</label>
+        <input type="text" id="monto_cesion" name="monto_cesion" value=""><br>
+
+        <label for="fecha_ultimo_vencimiento">Fecha Ultimo Vencimiento :</label>
+        <input type="text" id="fecha_ultimo_vencimiento" name="fecha_ultimo_vencimiento" value=""><br>
+
+        <label>Declaración Jurada :  </label>
+        <label>Si</label><br>
+
+        <label>Otras Condiciones :  </label>
+        <label>Ninguna</label><br>
+
+        <label for="nombre_contacto">Nombre Contacto :</label>
+        <input type="text" id="nombre_contacto" name="nombre_contacto" value=""><br>
+
+        <label for="fono_contacto">Fono Contacto :</label>
+        <input type="text" id="fono_contacto" name="fono_contacto" value=""><br>
+
+        <label for="email_contacto">Email Contacto :</label>
+        <input type="text" id="email_contacto" name="email_contacto" value=""><br>
+
+        <label for="email_deudor">Email Deudor :</label>
+        <input type="text" id="email_deudor" name="email_deudor" value=""><br>
+
+        <input type="submit" value="Generar Archivo Electrónico de Cesión">
+
+      
+      </form>
+</body>
